@@ -18,13 +18,13 @@ Private state transition execution and proving is performed by the end user. How
 4. Finalisation of state transition functions on Ethereum
 5. Storage of private notes
 
-Sequencers will need compensatiing for their efforts leading to requirements for the provision of payments to the sequencer. Note, some of the computation may be outsourced to third parties as part of the prover selection mechanism, the cost of this is borne by the sequencer outside of the protocol.
+Sequencers will need compensating for their efforts leading to requirements for the provision of payments to the sequencer. Note, some of the computation may be outsourced to third parties as part of the prover selection mechanism, the cost of this is borne by the sequencer outside of the protocol.
 
 We can define a number of requirements that serve to provide a transparent and fair mechanism of fee payments between transaction senders and sequencers.
 
 1. Senders need to accurately quantify the resource consumption of a transaction and generate an appropriate fee for it.
 2. Senders need to be assured that they will be charged fees fairly and deterministically for execution of their transaction and inclusion in a rollup.
-3. Senders need to be refunded for any unused fee resulting from procssing their transaction.
+3. Senders need to be refunded for any unused fee resulting from processing their transaction.
 4. Senders need to be able to successfully submit a transaction when they have not previously used Aztec before or possess any funds on the network.
 4. Sequencers need to be fairly and deterministically compensated for their expense in including transactions in a rollup.
 5. Sequencers require agency in accepting transactions based on the fee that is being paid.
@@ -35,7 +35,7 @@ We can define a number of requirements that serve to provide a transparent and f
 
 1. We will use concepts of L1 and L2 gas to universally define units of resource for the Ethereum and Aztec networks respectively. L1 gas directly mirrors the actual gas specification as defined by Ethereum, L2 gas covers all resource expended on the L2 network.
 2. We will deterministically quantify all resource consumption of a transaction into 4 values. These being the amortised and transaction specific quantities of each of L1 and L2 gas.
-3. The transaction sender will provide a single fee for the transaction. This will be split into 2 components to cover each of the L1 and L2 gas costs. The sender will specifiy `feePerGas` and `gasLimit` for each component. Doing so provides protection to the sender that the amount of fee applicable to L1 costs has an upper bound and L2 a lower bound.
+3. The transaction sender will provide a single fee for the transaction. This will be split into 2 components to cover each of the L1 and L2 gas costs. The sender will specify `feePerGas` and `gasLimit` for each component. Doing so provides protection to the sender that the amount of fee applicable to L1 costs has an upper bound and L2 a lower bound.
 4. We will constrain the sequencer to apply the correct amortised and transaction specific fees ensuring the sender can not be charged arbitrarily.
 5. We will define a method by which fees can be paid in any asset, either publicly or privately, on Ethereum or Aztec but where the sequencer retains agency as to what assets and fee payment methods they are willing to accept.
 6. Upon accepting a transaction, we will constrain the sequencer to receive payment and provide any refund owing via the methods specified by the sender.
@@ -103,11 +103,11 @@ By constraining each of the above values individually, the transaction sender is
 
 When a transaction is received by a sequencer, it will want to determine if the transaction has been endowed with sufficient fee to be considered for inclusion in a rollup. Although the transaction contains information as to the gas limits and fees it provides, these may not be accurate either because the sender is dishonest or because the simulation of any public functions was performed on a system state that differs to that at the point of inclusion. Unlike transactions on Ethereum it is not simply a case of linearly executing the transactions opcodes until completion of the transaction exceeds the provided gas. Rollup inclusion and public function execution and proving require significant resource investment on the part of the sequencer even for the most trivial of transaction.
 
-There are a series of steps the sequencer would wish to perform such that it incrementally increases it's committment to processing the transaction as it becomes more confident of a successful outcome:
+There are a series of steps the sequencer would wish to perform such that it incrementally increases it's commitment to processing the transaction as it becomes more confident of a successful outcome:
 
-1. Determine how much fee has been provided and verify that this is sufficent to cover the L1 and L2 gas limits specified in the transaction. Later on we will look at how this is done but it may involve simulation of a public function. The sequencer will have visibility over which function on which contract has been specified for this step and has agency to disregard the transaction if it is not willing to execute this step.
+1. Determine how much fee has been provided and verify that this is sufficient to cover the L1 and L2 gas limits specified in the transaction. Later on we will look at how this is done but it may involve simulation of a public function. The sequencer will have visibility over which function on which contract has been specified for this step and has agency to disregard the transaction if it is not willing to execute this step.
 2. Once the fee is known, verify that enough fee exists to cover the transaction's requirements at this stage. This would include publishing the results of the private stage of the transaction and the amortised cost of rollup construction and publishing.
-3. If at least one public function is enqueued, verify that enough fee exists to cover at least 1 iteration of the public VM, 1 iteration of the public kernel circuit and a non-zero amount left for public function simulation. The sequener here will seek to determine if it is worth proceeding with the transaction. Proceeding requires an investment at least covering the cost of the minimum public VM execution and an iteration of the public kernel circuit. The minimum cost could be described as the cost to simulate, execute and prove a function which reverts as soon as it enters the function.
+3. If at least one public function is enqueued, verify that enough fee exists to cover at least 1 iteration of the public VM, 1 iteration of the public kernel circuit and a non-zero amount left for public function simulation. The sequencer here will seek to determine if it is worth proceeding with the transaction. Proceeding requires an investment at least covering the cost of the minimum public VM execution and an iteration of the public kernel circuit. The minimum cost could be described as the cost to simulate, execute and prove a function which reverts as soon as it enters the function.
 
 Each of the above steps should be relatively trivial for the sequencer to perform and they have agency to disregard the transaction after each one. Having decided that a transaction is worth proceeding with, the sequencer will simulate any public portion of the transaction until completion or simulation exceeds the provided L1 or L2 gas limits. As simulation takes place, it should be noted that further L1 state updates will be made and any nested public calls will incur additional public VM and public kernel iteration costs.
 
@@ -147,7 +147,7 @@ It is of course possible that the fee payment contract and asset is supported by
 
 ### Fee Collection
 
-We will define a new block scoped gobal value ‘coinbase’ that will be used to identify the address of the sequencer for the current block. The sequencer will provide this address to public VM, public kernel and rollup circuits. The rollup circuits will constrain that the same value is used for all circuits in the proving tree.
+We will define a new block scoped global value ‘coinbase’ that will be used to identify the address of the sequencer for the current block. The sequencer will provide this address to public VM, public kernel and rollup circuits. The rollup circuits will constrain that the same value is used for all circuits in the proving tree.
 
 With this new value defined, a typical fee payment flow would look like:
 
@@ -170,8 +170,8 @@ With an appropriate fee determined, a second component of the transaction is exe
 
 - **feePerL1Gas** - The fee provided per unit of L1 gas
 - **feePerL2Gas** - The fee provided per unit of L2 gas
-- **l1BaseGasLimit** - The upper bound of L1 ammortised gas the transaction is willing to pay for
-- **l2BaseGasLimit** - The upper bound of L2 ammortised gas the transaction is willing to pay for
+- **l1BaseGasLimit** - The upper bound of L1 amortised gas the transaction is willing to pay for
+- **l2BaseGasLimit** - The upper bound of L2 amortised gas the transaction is willing to pay for
 - **l1TxGasLimit** - The upper bound of L1 transaction specific gas the transaction is willing to pay for
 - **l2TxGasLimit** - The upper bound of L2 transaction specific gas the transaction is willing to pay for
 - **feeDistribution** - The contract address and function selector the sequencer must call to process the fee distribution phase of the transaction
@@ -227,8 +227,8 @@ struct TxContext {
     l1GasUsed; // accumulated through circuits
     l2GasUsed; // accumulated through circuits
     refundRecipient; // used in the case of public payments/refunds
-    txId; // identifer used for private refunds
-    rollupSize; // set by the sequener for the rollup
+    txId; // identifier used for private refunds
+    rollupSize; // set by the sequencer for the rollup
 }
 ```
 
@@ -246,7 +246,7 @@ Public kernel circuit iterations will be executed for each public function call 
 
 ### Fee Distribution
 
-Once public function execution has completed (or hit the gas limit), the fee distribution component is executed. This is a public function and will also need to be proven via the VM and publc kernel circuits. The sequencer will have agency over which functions they are willing to accept and this will be part of the earlier transaction acceptance.
+Once public function execution has completed (or hit the gas limit), the fee distribution component is executed. This is a public function and will also need to be proven via the VM and public kernel circuits. The sequencer will have agency over which functions they are willing to accept and this will be part of the earlier transaction acceptance.
 
 The total fee taken by the sequencer is calculated from the values of consumed L1 and L2 gas and the `feePerGas` values provided with the transaction. Any balance remaining must be refunded.
 
